@@ -1,12 +1,17 @@
 import sharp from 'sharp'
 import path from 'path'
+import exifr from 'exifr'
 import fs from 'fs'
 
 async function resizeImages() {
     const folderPath = path.resolve(__dirname, '..', 'images')
-    fs.mkdirSync(folderPath)
     const resizedFolder = path.resolve(folderPath, 'resized')
-    fs.mkdirSync(resizedFolder)
+    if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath)
+    }
+    if (!fs.existsSync(resizedFolder)) {
+        fs.mkdirSync(resizedFolder)
+    }
     const files = fs.readdirSync(folderPath)
 
     console.log(files)
@@ -20,10 +25,15 @@ async function resizeImages() {
         const filePath = `${folderPath}/${file}`
         let buffer
 
+        const imageMetadata = await exifr.parse(filePath)
+        const imageWidth = imageMetadata.ImageWidth
+        const imageHeight = imageMetadata.ImageHeight
+        console.log(imageMetadata)
+
         if (extension === 'jpeg' || extension === 'jpg') {
-            buffer = await sharp(filePath).jpeg({ quality: 70 }).toBuffer()
+            buffer = await sharp(filePath).resize(imageWidth, imageHeight).jpeg({ quality: 70 }).toBuffer()
         } else {
-            buffer = await sharp(filePath).png({ quality: 70 }).toBuffer()
+            buffer = await sharp(filePath).resize(imageWidth, imageHeight).png({ quality: 70 }).toBuffer()
         }
 
         sharp(buffer).toFile(path.resolve(resizedFolder, file))
