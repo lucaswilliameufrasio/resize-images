@@ -37,15 +37,14 @@ async function resizeImages() {
         const readableStream = sharp(filePath)
           .resize(imageWidth, imageHeight)
           .jpeg({ quality: 70 })
-          
-        await pipelineAsync(readableStream, writeStream)
 
+        await pipelineAsync(readableStream, writeStream)
       } else {
         const readableStream = sharp(filePath)
           .resize(imageWidth, imageHeight)
           .png({ quality: 70 })
-          
-          await pipelineAsync(readableStream, writeStream)
+
+        await pipelineAsync(readableStream, writeStream)
       }
     }),
   )
