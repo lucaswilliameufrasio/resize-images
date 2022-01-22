@@ -2,7 +2,7 @@
   "scripts": {
     "build": "tsc",
     "resize": "node dist/resize.js",
-    "build-run": "rimraf dist && npm run build && npm run resize"
+    "vrum": "rimraf dist && npm run build && npm run resize"
   },
   "dependencies": {
     "exifr": "^7.1.3",
