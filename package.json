@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "build": "tsc",
+    "resize": "node dist/resize.js",
+    "build-run": "rimraf dist && npm run build && npm run resize"
+  },
   "dependencies": {
     "exifr": "^6.0.0",
     "sharp": "^0.26.3"
