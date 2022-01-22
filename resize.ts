@@ -2,6 +2,7 @@ import sharp from 'sharp'
 import path from 'path'
 import exifr from 'exifr'
 import fs, { createWriteStream } from 'fs'
+import { pipelineAsync } from './pipeline-async'
 
 async function resizeImages() {
   const folderPath = path.resolve(__dirname, '..', 'images')
@@ -33,15 +34,18 @@ async function resizeImages() {
       const writeStream = createWriteStream(path.resolve(resizedFolder, file))
 
       if (extension === 'jpeg' || extension === 'jpg') {
-        sharp(filePath)
+        const readableStream = sharp(filePath)
           .resize(imageWidth, imageHeight)
           .jpeg({ quality: 70 })
-          .pipe(writeStream)
+          
+        await pipelineAsync(readableStream, writeStream)
+
       } else {
-        sharp(filePath)
+        const readableStream = sharp(filePath)
           .resize(imageWidth, imageHeight)
           .png({ quality: 70 })
-          .pipe(writeStream)
+          
+          await pipelineAsync(readableStream, writeStream)
       }
     }),
   )
