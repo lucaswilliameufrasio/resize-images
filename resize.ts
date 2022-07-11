@@ -27,9 +27,10 @@ async function resizeImages() {
       const filePath = `${folderPath}/${file}`
 
       const imageMetadata = await exifr.parse(filePath)
+      console.log('imageMetadata', imageMetadata)
+      
       const imageWidth = imageMetadata.ImageWidth
       const imageHeight = imageMetadata.ImageHeight
-      console.log(imageMetadata)
 
       const writeStream = createWriteStream(path.resolve(resizedFolder, file))
 
