@@ -28,25 +28,21 @@ async function resizeImages() {
 
       const imageMetadata = await exifr.parse(filePath)
       console.log('imageMetadata', imageMetadata)
-      
-      const imageWidth = imageMetadata.ImageWidth
-      const imageHeight = imageMetadata.ImageHeight
+
+      const imageWidth = imageMetadata?.ImageWidth
+      const imageHeight = imageMetadata?.ImageHeight
 
       const writeStream = createWriteStream(path.resolve(resizedFolder, file))
+      const readStream = Boolean(imageWidth && imageWidth)
+        ? sharp(filePath).resize(imageWidth, imageHeight)
+        : sharp(filePath)
 
-      if (extension === 'jpeg' || extension === 'jpg') {
-        const readableStream = sharp(filePath)
-          .resize(imageWidth, imageHeight)
-          .jpeg({ quality: 70 })
+      const reducedQualityImageReadStream =
+        extension === 'jpeg' || extension === 'jpg'
+          ? readStream.jpeg({ quality: 70 })
+          : readStream.png({ quality: 70 })
 
-        await pipelineAsync(readableStream, writeStream)
-      } else {
-        const readableStream = sharp(filePath)
-          .resize(imageWidth, imageHeight)
-          .png({ quality: 70 })
-
-        await pipelineAsync(readableStream, writeStream)
-      }
+      await pipelineAsync(reducedQualityImageReadStream, writeStream)
     }),
   )
 }
