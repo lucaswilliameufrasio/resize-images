@@ -4,9 +4,9 @@
 - Type on command line:
 
 ```
- yarn
+ npm install
 ```
 
 ```
- yarn vrum
+ npm run vrum
 ```
